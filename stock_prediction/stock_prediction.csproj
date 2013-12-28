@@ -38,9 +38,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HistoricalStock.cs" />
     <Compile Include="HistoricalStockDownloader.cs" />
+    <Compile Include="DataAnalysis.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="project.txt" />
+    <None Include="valide_stock_code1.csv" />
   </ItemGroup>
 </Project>
