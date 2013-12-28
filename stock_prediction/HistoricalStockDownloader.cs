@@ -15,6 +15,8 @@ namespace stock_prediction
 			{
 				string data = web.DownloadString(string.Format("http://ichart.finance.yahoo.com/table.csv?s={0}&c={1}", ticker, yearToStartFrom));
 
+                //System.IO.File.WriteAllText(string.Format("raw data.csv"), data);
+
 				data =  data.Replace("r","");
 
 				string[] rows = data.Split(new string[] {"\n", "\r\n"}, StringSplitOptions.RemoveEmptyEntries);
@@ -28,20 +30,14 @@ namespace stock_prediction
 
 					string[] cols = rows[i].Split(',');
 
+                    DateTime currentDate = Convert.ToDateTime(cols[0]);
 
-					HistoricalStock hs = new HistoricalStock();
-
-					hs.Date = Convert.ToDateTime(cols[0]);
-
-					int currentYear = hs.Date.Year;
+                    int currentYear = currentDate.Year;
 
 					HistoricalStockRecord record;
 
-
 					if (currentYear >= yearToStartFrom && currentYear <= yearToEnd)
 					{
-
-					   HistoricalStockNode hsn = new HistoricalStockNode();
 
                         //create new record when a new year data is coming
 						if (tempYear != currentYear)
@@ -49,8 +45,8 @@ namespace stock_prediction
 							tempYear = currentYear;
 							record = new HistoricalStockRecord();
 							records.Add(record);
-							record.nodeList = new List<HistoricalStockNode>();
-							record.Year = hs.Date.Year;
+                            record.Quotes = new double[checkLeapYear(currentYear) ? DAYSINONEYEAR + 1 : DAYSINONEYEAR];
+                            record.Year = currentYear;
 						}
 						else
 						{
@@ -63,47 +59,18 @@ namespace stock_prediction
 //						hs.Low = Convert.ToDouble(cols[3]);
 //						hs.Close = Convert.ToDouble(cols[4]);
 //						hs.Volume = Convert.ToDouble(cols[5]);
+//                      hs.AdjClose = Convert.ToDouble(cols[6]);
 
-						hs.AdjClose = Convert.ToDouble(cols[6]);
+                        double value = Convert.ToDouble(cols[6]);
+                        record.Quotes[currentDate.DayOfYear-1] = value;
 
-
-						hsn.DayInYear = hs.Date.DayOfYear;
-
-                        //fill empty row with last close value
-                        if (DAYSINONEYEAR - hsn.DayInYear > record.nodeList.Count)
+                        /*fill empty row with close quote data from last day */
+                        for (int p = 0; p < 3 && currentDate.DayOfYear+p < (checkLeapYear(currentYear) ? DAYSINONEYEAR + 1 : DAYSINONEYEAR) 
+                            && record.Quotes[currentDate.DayOfYear+p] == 0; p++)
                         {
-                            double lastClose = 0.0;
-
-                            if (record.nodeList.Count == 0)
-                            {
-                                if (records.Count >= 2)
-                                {
-                                    HistoricalStockRecord lastRecord = records[records.Count - 2];
-                                    lastClose = lastRecord.nodeList[lastRecord.nodeList.Count - 1].Close;
-                                }
-                                else
-                                {
-                                    lastClose = 0.0;
-                                }
-                            }
-                            else
-                            {
-                                lastClose = record.nodeList[record.nodeList.Count - 1].Close;
-                            }
-
-
-                            for(int p = record.nodeList.Count; p < DAYSINONEYEAR - hsn.DayInYear; p++)
-                            {
-                                HistoricalStockNode hsnFill = new HistoricalStockNode();
-                                hsnFill.DayInYear = DAYSINONEYEAR - p;
-                                hsnFill.Close = lastClose;
-
-                                record.nodeList.Add(hsnFill);
-                            }  
+                            record.Quotes[currentDate.DayOfYear+p] = value;
                         }
 
-						hsn.Close = hs.AdjClose;
-						record.nodeList.Add(hsn);
 					}
 
 
@@ -112,6 +79,12 @@ namespace stock_prediction
 				return records;
 			}
 		}
+
+        /*Check if a year is leap year*/
+        private static bool checkLeapYear(int year)
+        {
+            return (year%4 == 0 && year%100 != 0) || (year%400 == 0);
+        }
 	}
 }
 

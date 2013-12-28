@@ -15,9 +15,9 @@ namespace stock_prediction
 
 				sb.AppendLine(string.Format("{0},{1}", "DayInYear", "Close")); 
 
-				foreach (var node in record.nodeList)
+                for (int i = 0; i < record.Quotes.Length; i++)
 				{
-					sb.AppendLine(string.Format("{0},{1}", node.DayInYear , node.Close)); 
+                    sb.AppendLine(string.Format("{0},{1}", i+1, record.Quotes[i])); 
 				}
 
 				System.IO.File.WriteAllText(string.Format("{0} - {1}.csv", code, record.Year), sb.ToString());

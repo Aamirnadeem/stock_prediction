@@ -14,16 +14,10 @@ namespace stock_prediction
 			public double AdjClose { get; set; }
 	}
 
-	public class HistoricalStockNode
-	{
-		public int DayInYear { get; set; }
-		public double Close { get; set; }
-	}
-
 	public class HistoricalStockRecord
 	{
 		public int Year { get; set;}
-		public List<HistoricalStockNode> nodeList { get; set; }
+        public double[] Quotes { get; set; }
 	}
 }
 
