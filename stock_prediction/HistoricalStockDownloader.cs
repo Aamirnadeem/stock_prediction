@@ -18,7 +18,7 @@ namespace stock_prediction
 
 				data =  data.Replace("r","");
 
-				string[] rows = data.Split('n');
+				string[] rows = data.Split(new string[] {"\n", "\r\n"}, StringSplitOptions.RemoveEmptyEntries);
 
 				//First row is headers so Ignore it
 				for (int i = 1; i < rows.Length; i++)
