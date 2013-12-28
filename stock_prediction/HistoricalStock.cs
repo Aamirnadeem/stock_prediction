@@ -12,5 +12,11 @@ namespace stock_prediction
 			public double Volume { get; set; }
 			public double AdjClose { get; set; }
 	}
+
+	public class HistoricalStockNode
+	{
+		public int DayInYear { get; set; }
+		public double Close { get; set; }
+	}
 }
 
