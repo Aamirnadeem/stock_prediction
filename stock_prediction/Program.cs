@@ -9,7 +9,7 @@ namespace stock_prediction
 		public static void Main (string[] args)
 		{
 			string code = "AAPL";
-			int yearToStart = 2003;
+			int yearToStart = 2011;
 			int yearToEnd = 2013;
 
 			List<HistoricalStockRecord> data = HistoricalStockDownloader.DownloadData(code, yearToStart, yearToEnd);
@@ -17,8 +17,8 @@ namespace stock_prediction
 			DataAnalysis dataAnalysis = new DataAnalysis();
 
             dataAnalysis.generateStockQuoteCSV(code, data);
-            dataAnalysis.generateStockDerivativeCSV(code, data, 1);
-
+            List<HistoricalStockDerivative> derivatives =dataAnalysis.generateStockDerivativeCSV(code, data, 1);
+            dataAnalysis.generateStockDerivativeSumCSV(code, derivatives);
 
 			Console.Read();
 		}
