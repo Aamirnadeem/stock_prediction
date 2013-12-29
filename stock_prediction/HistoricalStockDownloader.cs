@@ -64,14 +64,25 @@ namespace stock_prediction
                         double value = Convert.ToDouble(cols[6]);
                         record.Quotes[currentDate.DayOfYear-1] = value;
 
-                        /*fill empty row with close quote data from last day */
-                        for (int p = 0; p < 3 && currentDate.DayOfYear+p < (checkLeapYear(currentYear) ? DAYSINONEYEAR + 1 : DAYSINONEYEAR) 
-                            && record.Quotes[currentDate.DayOfYear+p] == 0; p++)
+
+
+                        // fill empty row with close quote data from last day
+                        for (int p = 0, q = 0; 
+                            p < 5 && q < 5 
+                            && currentDate.DayOfYear + p < (checkLeapYear(currentYear) ? DAYSINONEYEAR + 1 : DAYSINONEYEAR) 
+                            && currentDate.DayOfYear - q >= 0
+                            && record.Quotes[currentDate.DayOfYear+p] == 0; 
+                            p++, q++)
                         {
                             record.Quotes[currentDate.DayOfYear+p] = value;
+                            record.Quotes[currentDate.DayOfYear-q] = value;
                         }
+
 					}
+
+
 				}
+
 				return records;
 			}
 		}

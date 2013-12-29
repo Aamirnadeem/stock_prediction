@@ -46,4 +46,7 @@
     <None Include="project.txt" />
     <None Include="valide_stock_code1.csv" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="SampleResult\" />
+  </ItemGroup>
 </Project>
