@@ -70,12 +70,8 @@ namespace stock_prediction
                         {
                             record.Quotes[currentDate.DayOfYear+p] = value;
                         }
-
 					}
-
-
 				}
-
 				return records;
 			}
 		}

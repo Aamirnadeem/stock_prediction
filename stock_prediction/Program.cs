@@ -16,7 +16,8 @@ namespace stock_prediction
 
 			DataAnalysis dataAnalysis = new DataAnalysis();
 
-			dataAnalysis.generateCSV(code, data);
+            dataAnalysis.GenerateStockQuoteCSV(code, data);
+            dataAnalysis.GenerateStockDerivativeCSV(code, data, 1);
 
 			Console.Read();
 		}
