@@ -20,10 +20,18 @@ namespace stock_prediction
         public double[] Quotes { get; set; }
 	}
 
+    public class AvgHistoricalStockRecord
+    {
+        public int StartYear { get; set;}
+        public int EndYear { get; set;}
+        public double[] AvgQuotes { get; set; }
+    }
+
     public class HistoricalStockDerivative
     {
         public int Year { get; set; }
         public double[] Derivatives { get; set; }
     }
+
 }
 
