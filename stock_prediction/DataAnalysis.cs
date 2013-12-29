@@ -35,15 +35,13 @@ namespace stock_prediction
 				sb.AppendLine(string.Format("{0},{1}", "DayInYear", "Derivative"));
 
 				//calculation start on the forth date of the year
-				for (int i = 2; i < record.Quotes.Length - 1; )
+				for (int i = 0; i < record.Quotes.Length - 1;)
 				{
 					double date1 = record.Quotes[i];
-					double date2 = record.Quotes[i + daysInterval];
+					double date2 = record.Quotes[i += daysInterval];
 
 					double derivative = Math.Derivative(0, (double)daysInterval, date1, date2);
-					sb.AppendLine(string.Format("{0},{1}", i + 2, derivative));
-
-					i = i + daysInterval;
+					sb.AppendLine(string.Format("{0},{1}", i, derivative));
 				}
 
 				System.IO.File.WriteAllText(string.Format("{0} - {1} - Derivative.csv", code, record.Year), sb.ToString());
