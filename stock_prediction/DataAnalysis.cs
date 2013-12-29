@@ -112,7 +112,7 @@ namespace stock_prediction
 				spanAvg = spanSum / daysInterval;
 				predictionResults[i] = spanAvg;
 
-				sb.AppendLine(string.Format("{0},{1}", i+1, spanAvg));
+				sb.AppendLine(string.Format("{0},{1}", i + 1, spanAvg));
 			}
 
 			System.IO.File.WriteAllText(string.Format("{0} - {1} - {2} - prediction.csv", code, avgStockDerivative.StartYear, avgStockDerivative.EndYear), sb.ToString());
@@ -160,7 +160,7 @@ namespace stock_prediction
 
 				}
 
-				sb.AppendLine(string.Format("{0},{1},{2}", i, i+daysThreshold, getTypeString(type)));
+				sb.AppendLine(string.Format("{0},{1},{2}", i + 1, i + daysThreshold + 1, getTypeString(type)));
 			}
 
 			System.IO.File.WriteAllText(string.Format("{0} - {1} - {2} - prediction report.csv", code, yearToStart, yearToEnd), sb.ToString());
