@@ -5,7 +5,7 @@ using System.Text;
 
 namespace stock_prediction
 {
-    public class Math
+	public static class Math
     {
         public static double Derivative(double x1, double x2, double y1, double y2)
         {

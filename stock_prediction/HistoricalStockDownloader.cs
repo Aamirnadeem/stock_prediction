@@ -7,6 +7,7 @@ namespace stock_prediction
 	public class HistoricalStockDownloader
 	{
         const int DAYSINONEYEAR = 365;
+
 		public static List<HistoricalStockRecord> DownloadData(string ticker, int yearToStartFrom, int yearToEnd)
 		{
 			List<HistoricalStockRecord> records = new List<HistoricalStockRecord>();
@@ -64,26 +65,12 @@ namespace stock_prediction
                         double value = Convert.ToDouble(cols[6]);
                         record.Quotes[currentDate.DayOfYear-1] = value;
 
-
-
-                        // fill empty row with close quote data from last day
-                        for (int p = 0, q = 0; 
-                            p < 5 && q < 5 
-                            && currentDate.DayOfYear + p < (checkLeapYear(currentYear) ? DAYSINONEYEAR + 1 : DAYSINONEYEAR) 
-                            && currentDate.DayOfYear - q >= 0
-                            && record.Quotes[currentDate.DayOfYear+p] == 0; 
-                            p++, q++)
-                        {
-                            record.Quotes[currentDate.DayOfYear+p] = value;
-                            record.Quotes[currentDate.DayOfYear-q] = value;
-                        }
-
 					}
 
 
 				}
 
-				return records;
+                return fillEmptyQuote(records);
 			}
 		}
 
@@ -91,6 +78,57 @@ namespace stock_prediction
         private static bool checkLeapYear(int year)
         {
             return (year%4 == 0 && year%100 != 0) || (year%400 == 0);
+        }
+
+        // fill empty row with quote data from the close day
+        private static List<HistoricalStockRecord> fillEmptyQuote(List<HistoricalStockRecord> records)
+        {
+            double lastQuote;
+
+            if (records.Count > 0)
+            {
+
+                foreach (var record in records)
+                {
+                    lastQuote = 0;
+
+                    for (int i = 0; i < (checkLeapYear(record.Year) ? DAYSINONEYEAR + 1 : DAYSINONEYEAR); i++)
+                    {
+                        double currentQuote = record.Quotes[i];
+
+                        if (currentQuote != 0)
+                        {
+                            lastQuote = currentQuote;
+                        }
+                        else if (currentQuote == 0 && lastQuote != 0)
+                        {
+                            record.Quotes[i] = lastQuote;
+                        }
+                        else
+                        {
+                            int firstValuedQuoteIndex = 0;
+
+                            for (int j = 0; j < (checkLeapYear(record.Year) ? DAYSINONEYEAR + 1 : DAYSINONEYEAR); j++)
+                            {
+                                if (record.Quotes[j] != 0)
+                                {
+                                    firstValuedQuoteIndex = j;
+                                    break;
+                                }
+                            }
+
+                            double firstValuedQuoteValue = record.Quotes[firstValuedQuoteIndex];
+                            record.Quotes[i] = firstValuedQuoteValue;
+                            lastQuote = firstValuedQuoteValue;
+                        }
+
+                    }
+
+                }
+
+            }
+
+            return records;
         }
 	}
 }
