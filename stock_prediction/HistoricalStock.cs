@@ -19,5 +19,11 @@ namespace stock_prediction
 		public int Year { get; set;}
         public double[] Quotes { get; set; }
 	}
+
+    public class HistoricalStockDerivative
+    {
+        public int Year { get; set; }
+        public double[] Derivatives { get; set; }
+    }
 }
 

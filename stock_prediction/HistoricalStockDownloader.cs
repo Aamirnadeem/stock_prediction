@@ -6,7 +6,7 @@ namespace stock_prediction
 {
 	public class HistoricalStockDownloader
 	{
-        const int DAYSINONEYEAR = 365;
+        public static int DAYSINONEYEAR = 365;
 
 		public static List<HistoricalStockRecord> DownloadData(string ticker, int yearToStartFrom, int yearToEnd)
 		{
@@ -75,7 +75,7 @@ namespace stock_prediction
 		}
 
         /*Check if a year is leap year*/
-        private static bool checkLeapYear(int year)
+        public static bool checkLeapYear(int year)
         {
             return (year%4 == 0 && year%100 != 0) || (year%400 == 0);
         }
