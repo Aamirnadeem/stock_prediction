@@ -9,23 +9,28 @@ namespace stock_prediction
 		public static void Main (string[] args)
 		{
 			string code = "AAPL";
-			int yearToStart = 2011;
-			int yearToEnd = 2013;
+			int yearToStart = 2002;
+			int yearToEnd = 2012;
+			int yearToPredict = yearToEnd + 1;
 
             int daysOfDerivativeInterval = 1;
             int daysOfAvgDerivativeInterval = 5;
             int daysOfPredictionThreshold = 5;
             double valueOfPredictionThreshold = 0.0;
 
-			List<HistoricalStockRecord> data = HistoricalStockDownloader.DownloadData(code, yearToStart, yearToEnd);
+			List<HistoricalStockRecord> data = HistoricalStockDownloader.DownloadData(code, yearToStart, yearToPredict);
+			List<HistoricalStockRecord> watchedData = data.GetRange(0, data.Count - 1);
+			List<HistoricalStockRecord> evaluatedData = data.GetRange(data.Count - 1, 1);
 
 			DataAnalysis dataAnalysis = new DataAnalysis();
 
-            dataAnalysis.generateStockQuoteCSV(code, data);
-            List<HistoricalStockDerivative> derivatives = dataAnalysis.generateStockDerivative(code, data, daysOfDerivativeInterval);
+			dataAnalysis.generateStockQuoteCSV(code, watchedData);
+			List<HistoricalStockDerivative> derivatives = dataAnalysis.generateStockDerivative(code, watchedData, daysOfDerivativeInterval);
             AvgHistoricalStockRecord avgDerivatives= dataAnalysis.generateStockDerivativeAvg(code, derivatives);
             double[] predictionResults = dataAnalysis.generatePrediction(code, daysOfAvgDerivativeInterval, avgDerivatives);
-            dataAnalysis.generateReport(code, yearToStart, yearToEnd, daysOfPredictionThreshold, valueOfPredictionThreshold, predictionResults);
+			dataAnalysis.generateReport(code, yearToStart, yearToEnd, yearToPredict, 
+				daysOfAvgDerivativeInterval, daysOfPredictionThreshold, 
+				valueOfPredictionThreshold, predictionResults, evaluatedData[0].Quotes);
 
 			Console.Read();
 		}

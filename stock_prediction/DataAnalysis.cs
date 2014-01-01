@@ -121,10 +121,23 @@ namespace stock_prediction
 		}
 
 		//generate prediction report to CSV file
-		public void generateReport(string code, int yearToStart, int yearToEnd, int daysThreshold, double valueThreshold, double[] predictionResults)
+		public void generateReport(string code, int yearToStart, int yearToEnd, int yearToPredict, int daysOfAvgDerivativeInterval, int daysThreshold, 
+			double valueThreshold, double[] predictionResults, double[] evaluatedData)
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.AppendLine(string.Format("{0},{1},{2}", "Start Day", "End Day", "Recommendation Type"));
+			sb.AppendLine(string.Format("{0},{1},{2},{3}", "Start Year", "End Year", "Prediction Year","Days Interval"));
+
+			PredictionResult result = new PredictionResult();
+			result.StartYear = yearToStart;
+			result.EndYear = yearToEnd;
+			result.PredictedYear = yearToPredict;
+			result.DaysInterval = daysOfAvgDerivativeInterval;
+
+			double totalScore = 0;
+			PredictionType[] types = new PredictionType[predictionResults.Length];
+
+			sb.AppendLine(string.Format("{0},{1},{2},{3}", result.StartYear, result.EndYear, result.PredictedYear, result.DaysInterval));
+			sb.AppendLine(string.Format("{0},{1},{2}", "Day", "Prediction Type", "Evalution Result"));
 
 			for (int i = 0; i < predictionResults.Length; i++)
 			{
@@ -160,8 +173,18 @@ namespace stock_prediction
 
 				}
 
-				sb.AppendLine(string.Format("{0},{1},{2}", i + 1, i + daysThreshold + 1, getTypeString(type)));
+				types[i] = type;
+				bool evaluationResult = getEvalutionResult(evaluatedData[i], evaluatedData[i + daysOfAvgDerivativeInterval], type);
+
+				if (evaluationResult)
+				{
+					totalScore++;
+				}
+
+				sb.AppendLine(string.Format("{0},{1},{2}", i + 1, getTypeString(type), evaluationResult));
 			}
+
+			sb.AppendLine(string.Format("{0}", totalScore/predictionResults.Length));
 
 			System.IO.File.WriteAllText(string.Format("{0} - {1} - {2} - prediction report.csv", code, yearToStart, yearToEnd), sb.ToString());
 
@@ -187,6 +210,22 @@ namespace stock_prediction
 			}
 
 			return typeString;
+		}
+
+		private bool getEvalutionResult(double startDayQuote, double endDayQuote, PredictionType type)
+		{
+			if (endDayQuote - startDayQuote > 0)
+			{
+				return type == PredictionType.Buy;
+			}
+			else if (endDayQuote - startDayQuote < 0)
+			{
+				return type == PredictionType.Sell;
+			}
+			else
+			{
+				return type == PredictionType.Hold;
+			}
 		}
 
 
